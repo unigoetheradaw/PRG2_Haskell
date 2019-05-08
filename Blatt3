@@ -1,0 +1,343 @@
+-- ============================================================================
+-- Grundlagen der Programmierung 2
+-- Aufgabenblatt 3
+
+-- Tutor: @ki.cs.uni-frankfurt.de
+-- Raum: H7
+-- ============================================================================
+-- Aufgabe 3.1.:
+
+import Data.Char
+
+-- Bemerkung: In Haskell sind String eine Liste von Chars. 
+-- Ergo: type String = [Char] was uns die rekursiven Operationen erlaubt.
+
+-- Main Func
+main:: IO()
+main = do
+ -- Testcases
+ -- print $ onlyLetters str1
+ print $ "Enter: transform, g1, g2, g3, legSieger leg[Int], set_winner [leg4,leg3,leg3,leg4,leg1]" 
+
+transform = do
+ let result = (k (i(h (g (f str3))))) -- str1 z.b. durch str2 ersetzen. 
+ print $ result
+
+str1 :: String
+str1 = "a? haskell1337zYyZ% !z"
+
+str2 :: String
+str2 = "Hallo-World99$...!! HI"
+
+str3 :: String
+str3 = "GutenTag.Hasell!!ist__sehrschoeneSyntax"
+
+-- Zuerst werden alle Zeichen, die weder Ziffern, Buchstaben noch Leerzeichen sind, entfernt
+-- Es kommt alles in die List was Zahl, Buchst, Leerz ist. Wichtig!
+f xs = [ x | x <- xs,  (isDigit x) || (isAlpha x) || (isSpace x) ]
+
+-- Dann werden alle Leerzeichen durch Unterstriche ’_’ ersetzt
+-- Rekursiver Aufruf. Head x wird in Hilfsfunktion gesteckt, 
+-- nach Auswertung ob Leerzeichen wird rekursiv der Tail ebenso analysiert.
+-- Fuer die leere Liste, wird ein Basecase definiert. Liste [] == ""
+-- Da wir in k einen String uebergeben, muessen wir "" schreiben. Im Falle von 
+-- einem einzigen Char hätte '' gereicht und im Falle eines Int =0. 
+g [] = ""
+g (x:xs) = (if (isSpace x) then '_' else x) : (g xs)
+
+-- Danach werden alle Ziffern durch Leerzeichen ersetzt (diese Leerzeichen werden nicht durch
+-- Unterstriche ersetzt!). 
+-- Rekursiver Aufruf. Head x wird in Hilfsfunktion gesteckt, 
+-- nach Auswertung ob Zahl wird rekursiv der Tail ebenso analysiert.
+-- Fuer die leere Liste, wird ein Basecase definiert. Liste [] == ""
+-- Da wir in k einen String uebergeben, muessen wir "" schreiben. Im Falle von 
+-- einem einzigen Char hätte '' gereicht und im Falle eines Int =0.
+h [] = ""
+h (x:xs) = (if (isDigit x) then ' ' else x) : (h xs)
+
+-- Dann werden alle Kleinbuchstaben durch Großbuchstaben ersetzt.
+-- Rekursiver Aufruf. Head x wird in Hilfsfunktion gesteckt, 
+-- nach Auswertung ob Kleinbuchstabe wird rekursiv der Tail ebenso analysiert.
+-- Fuer die leere Liste, wird ein Basecase definiert. Liste [] == ""
+-- Da wir in k einen String uebergeben, muessen wir "" schreiben. Im Falle von 
+-- einem einzigen Char hätte '' gereicht und im Falle eines Int =0.
+i [] = ""
+i (x:xs) = (if (isLower x) then (toUpper x) else x) : (i xs)
+
+-- Zuletzt werden alle Buchstaben ’y’ bzw. ’Y’ durch ’z’ bzw. ’Z’ ersetzt und umgekehrt
+-- (alle ’z’ bzw. ’Z’ werden durch ’y’ bzw. ’Y’ ersetzt).
+-- Rekursiver Aufruf. Head x wird in Hilfsfunktion gesteckt, 
+-- nach Auswertung der betreffenden Buchstaben wird rekursiv der Tail ebenso analysiert.
+-- Fuer die leere Liste, wird ein Basecase definiert. Liste [] == ""
+-- Da wir in k einen String uebergeben, muessen wir "" schreiben. Im Falle von 
+-- einem einzigen Char hätte '' gereicht und im Falle eines Int =0.
+k [] = ""
+k(x:xs) = j x : (k xs)
+
+j (x) 
+ | x == 'Y' = 'Z'
+ | x == 'y' = 'z'
+ | x == 'Z' = 'Y'
+ | x == 'z' = 'y'
+ | otherwise = x
+
+ {-
+ Testfälle
+Input: "a? haskell1337zYyZ% !z"
+Output: "A_HASKELL    YZZY_Y"
+
+
+Input: "Hallo-World99$...!! HI"^
+Output: "HALLOWORLD  _H"
+
+Input: "GutenTag.Hasell!!ist__sehrschöneSyntax"
+"GUTENTAGHASELLISTSEHRSCHOENESZNTAX"
+
+ -}
+
+-- =============================================================================
+-- =
+-- = Aufgabe 2
+-- =
+
+-- -
+-- - a)
+-- - 
+
+g1 = do
+ print $ "Ausgangsstring x: " ++ g1_str1 
+ let b = g1_f g1_str1 s1 s1b
+ print $ b
+ let c = g1_f b s2 s2b
+ print $ c
+ let d = g1_f c s3 s3b
+ print $ d
+
+g1_str1 = "Geben Sie mir bitte die Zange her!"
+
+-- Zu finden und ersetzende Zeichenketten
+s1 =   "Geben Sie mir"
+s2 = "bitte"
+s2b = ""
+s3 = "Zange"
+s3b = "Tang"
+s1b = "Geb mi mol"
+
+g1_f [] _ _ = [] -- Base Case fuer Rekursion [] := Leere Liste/Ende einer Liste
+g1_f x y repl =
+ if take (length y) x == y
+  -- Wir vergleichen immer die ersten length y buchstaben mit x und 
+  -- kommen dann zur If Auswertung
+  then do 
+   if y == "" then repl ++ (g1_f x y repl) -- Empty Char in Haskell mhm
+   else repl ++ (g1_f (drop (length y) x) y repl)
+  -- length wertet zu int aus, nämlich länge von substring y
+  -- wir lassen die anzahl der buchstaben rek im String x fallen und ersetzen durch repl  
+   else do [head x] ++ (g1_f (tail x) y repl)
+   -- wir nehmen head und suchen rekursiv im tail von x weiter
+   -- Wenn wir nichts zu ersetzen finden, reihen wir die Chars wie Perlen
+   -- auf ein Kette rekursiv. 
+
+-- String mit zu ersetzenden Elementen
+-- Substring der ersetzt werden soll
+-- mit repl (was fuer replace steht)
+-- take: take 5 [1,2] > Output: [1,2]
+-- length: returns te number of items in a list
+-- drop: drop 2 [1,2,3] > Output: [3]
+
+-- Testcases einfach in "let b = test1 str[] s1 s1b" einsetzen
+g1_str2 = "bitte Geben Sie mir bitte die Zange her!bitte"
+g1_str3 = "bitte Geben Sie mir Geben Sie mir bitte die Zange her!bitte"
+g1_str4 = "bitte Geben Sie mir Geben Sie mir bitte die Zange her!bitte Geben Sir mir bitte"
+g1_str5 = "bitte G3ben Sie mir die Zange her!bitte Geben Sir mir"
+
+-- -
+-- - b)
+-- -
+
+g2 = do
+ print $ g2_call g2_l4 -- Aufruf der Hilfsfunktion mit einer Liste
+
+g2_h [] y = y -- Base Case wenn liste x leer
+g2_h [x] y = (y++ [[x]]) -- Base Case wenn liste ein Element
+g2_h [x,z] y = (y++[[x,z]])
+g2_h (v:w:x:xs) y = g2_h (xs) (y++[[w,x,v]]) -- Rekursiver Aufruf der Vertauschungen in v,w,x und der restliste
+
+g2_call list = g2_h list [] -- Hilfsfunktion
+
+-- Testfälle g3
+g2_l2 = [1..100] -- Erstes Element der Result Liste: [2,3,1], letzte Element [100]. Korrekt, da 100 mod 3 = 1. Ergo ein Element muss einzeln stehen.
+g2_l3 = [1,2,3,434,3,32234,23,3,3] -- Mit ungerader Anzahl der Listenelemente, die aber mod 3 = 0 ergeben sind alle Unterlisten richtigerweise 3 elementig.
+g2_l4 = ['a','b','c'] -- Funktionier auch mit Buchstaben. Result: ["bca"]
+
+-- -
+-- - c)
+-- -
+
+g3 = do
+ let l1 = [1..11] -- Definition einer Liste
+ print $ g3_call l1 -- Aufruf und print der Funktion
+
+-- Hilfsfunktion h
+g3_h [] y = y -- Basisfall, falls x leer
+g3_h [x] y = (y ++ [[x]]) -- Basisfall, falls x nur ein Elementen enthält
+g3_h x y = g3_h (g3_f x) (y ++ [[(head x)] ++ [(last x)]]) -- Einfuegen in Hilfsliste y
+
+g3_f x = drop 1 (take ((length x) -1) x) -- Wir entfernen das erste und letzte Element
+
+g3_call x = g3_h x [] -- Aufruf der Hilfsfunktion mit unser Liste x und leerer Liste
+
+-- Testfälle g3
+l2 = [1..100] -- Erstes Element der Result Liste: [1,100], letzte Element [50,51]
+l3= [1,2,3,434,3,32234,23,3,3] -- Mit ungerader Anzahl der Listenelemente, ist das letzte Element richtigerweise in einer eigenen Liste mit nur einem Element
+l4 = ['a','b','c'] -- Funktionier auch mit Buchstaben. Result: ["ac","b"]
+
+-- =
+-- =
+-- =============================================================================
+
+-- =============================================================================
+-- =
+-- = Aufgabe 3  ::
+-- =
+-- Beispiel-Legs.
+leg1 = [[[3,20],[3,20],[3,20]], [[3,20],[3,19],[2,25]], [[3,19],[3,19],[3,19]],
+        [[3,20],[3,19],[2,25]], [[2,25],[2,25],[2,25]]]
+leg2 = [[[3,20],[3,20],[3,20]], [[3,20],[3,19],[2,25]], [[3,19],[3,19],[3,19]],
+        [[3,20],[3,19],[2,25]], [[2,25],[2,25],[1,25]], [[3,20],[3,19],[2,25]]]
+leg3 = [[[3,20],[1,20],[1,20]], [[3,20],[1,20],[1,20]], [[3,20],[3,20],[3,20]],
+        [[3,20],[3,20],[3,20]], [[3,20],[1,1] ,[2,20]], [[3,20],[1,1] ,[2,20]],
+        [[3,20],[1,20],[2,20]]]
+leg4 = [[[3,20],[1,20],[1,20]], [[3,20],[1,20],[1,20]], [[3,20],[3,20],[3,20]],
+        [[3,20],[3,20],[3,20]], [[3,20],[1,1] ,[2,20]], [[3,20],[1,1] ,[2,20]],
+        [[3,20],[1,20],[1,20]], [[3,20],[1,20],[2,20]]]
+leg5 = [[[3,2000000],[1,20],[1,20]], [[3,20],[1,20],[1,20]], [[3,20],[3,20],[3,20]],
+        [[3,20],[3,20],[3,20]], [[3,20],[1,1] ,[2,20]], [[3,20],[1,1] ,[2,20]],
+        [[3,20],[1,20],[1,20]], [[3,20],[1,20],[2,20]]]
+-- -
+-- - a)
+-- -
+
+legSieger leg = do 
+ legSieger_help leg
+ 
+--checkLeg 
+
+-- Schaut ob ein Element in einer Liste enthalten ist. Ja -> True, Nein -> sonst
+is_member n [] = False
+is_member n (x:xs)
+    | n == x = True
+    | otherwise = is_member n xs
+
+-- Checkt ob ein angegebener Wurf legal
+check_pitch (x:y:z)
+    | x == 0 && y == 0 = True -- Fehlwurf
+    | is_member x [1,2,3] && is_member y [1..20] = True -- Normaler Wurf
+    | is_member x [1,2] && y == 25  = True -- Single/Double Bulls
+    | otherwise = False -- Ungueltig
+
+-- Check 3 Wuerfe legal
+check_3 leg move sum = if check_pitch (leg!!move!!0) && check_pitch (leg!!move!!1) && check_pitch (leg!!move!!2) then True
+            else False
+
+-- Check 2 Wuerfe legal
+check_2 leg move sum = if check_pitch (leg!!move!!0) && check_pitch (leg!!move!!1) && (sum - (sum_pitch (leg!!move) 0)) <= 0 then True
+            else False
+
+-- Check 1 Wuerfe legal
+check_1 leg move sum = if check_pitch (leg!!move!!0) && (sum - (sum_pitch (leg!!move) 0)) <= 0 then True
+            else False
+
+-- Check ob Aufnahme legal
+pitch_legal leg move sum = 
+    -- Check 3 Wuerfe legal
+    if length (leg!!move) == 3 then
+      check_3 leg move sum
+    -- Check 2 Wuerfe legal
+    else if length (leg!!move) == 2 then
+      check_2 leg move sum
+    -- Check 1 Wuerfe legal
+    else if length (leg!!move) == 1 then
+      check_1 leg move sum
+    else False
+
+-- Falls (sum - (sum_pitch (leg!!move) 0)) kleiner 0, so hat Spieler ueberworfen
+check_over leg move sum =
+    if (sum - (sum_pitch (leg!!move) 0)) < 0 then True
+    else False
+
+-- Summe der erreichten Punkte eine legalen Wurfs
+sum_pitch [] sum = sum
+sum_pitch (x:xs) sum = sum_pitch xs (sum+(x!!1*x!!0))
+
+-- Check ob Gewinner vorhanden. Oder ungueltige Partie oder 3 als continue Wert
+check_winner leg player1_sum player2_sum move 
+ | player1_sum == 0 && move == length leg = 1
+ | player2_sum == 0 && move == length leg = 2
+ | move > length leg = 0
+ | otherwise = 3 
+
+-- Wer ist an der Reihe? Spieler 1 mod 2 /=0
+check_move move = if (move `mod` 2) == 0 then True else False
+
+-- Check ob einer schon gewonnen oder die Partie weitergehen kann
+check_victory leg player1_sum player2_sum move =   
+    if (check_winner leg player1_sum player2_sum move /= 3) then (check_winner leg player1_sum player2_sum move) -- Wenn noch keiner gewonnen hat, das Spiel noch läuft,
+    -- sind Wuerfe erlaubt
+    else if (check_move move) then -- Ist Spieler 1 am Zug?
+        if (pitch_legal leg move player1_sum) then 
+            -- Hat Spieler 1 ueberworfen?
+            if (check_over leg move player1_sum) then (check_victory leg player1_sum player2_sum (move+1)) -- Falls nicht ueberworfen, ist Sieg Spieler 1?
+            else (check_victory leg (player1_sum - (sum_pitch (leg!!move) 0)) player2_sum (move+1))
+        else 0        
+    else -- Spieler 2 muss am Zug sein
+        if (pitch_legal leg move player2_sum) then 
+            -- Check, ob Spieler 2 legalen Wurf hat
+            if (check_over leg move player2_sum) then (check_victory leg player1_sum player2_sum (move+1)) -- Falls nicht ueberworfen, ist Sieg Spieler 2?
+            else (check_victory leg player1_sum (player2_sum - (sum_pitch (leg!!move) 0)) (move+1))
+        else 0
+
+
+
+legSieger_help leg = check_victory leg 501 501 0
+
+-- - TESTS
+{-
+legSieger leg1 -> 1 : Korrekt
+
+legSieger leg2 -> 2 : Korrekt
+
+legSieger leg3 -> 1 : Korrekt
+
+legSieger leg4 -> 2 : Korrekt
+
+legSieger leg5 -> 0 : Ungueltig, Korrekt
+-}
+
+-- - b)
+-- - 
+
+-- Zähle Siege
+count_victories x y even_val
+ | null x = y
+ | (legSieger_help (head x)) == 0 = error "Leg falsch angegeben."
+ | (legSieger_help (head x)) == 1 && even_val = count_victories (tail x) (y+1) False
+ | (legSieger_help (head x)) == 2 && not even_val = count_victories (tail x) (y+1) True
+ | otherwise = count_victories (tail x) y (not even_val)
+
+-- Wer hat Satz gewonnen
+set_winner x
+ | length x > 5 = error "Zu viele Legs fuer einen Satz."
+ | (count_victories x 0 True) > 3 = error "Bei 3 gewonnenen Legs, ist ein Satz beendet."
+ | (count_victories x 0 True) == 3 = True
+ | otherwise = False
+
+
+-- = TESTS 
+{-
+set_winner [leg4,leg3,leg3,leg4,leg1]-> True, da Spieler 1 hier gewinnt.
+
+set_winner [leg5,leg3,leg3,leg4,leg1]-> Error zurueck "Ein Leg wurde falsch angegeben."
+
+set_winner [leg4,leg3,leg3,leg4]-> Error "Der Satz ist noch nicht beendet. Es steht noch kein Sieger fest."
+-}                                                                               
